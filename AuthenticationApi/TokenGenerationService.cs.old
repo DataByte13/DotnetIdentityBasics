@@ -1,0 +1,44 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
+namespace AuthenticationApi;
+public class TokenGenerationService
+{
+    private readonly IConfiguration _configuration;
+
+    public TokenGenerationService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public string GenerateToken(string userId, string role)
+    {
+        var jwtOptions = _configuration.GetSection("JwtOptions");
+
+        var issuer = jwtOptions.GetValue<string>("Issuer");
+        var audience = jwtOptions.GetValue<string>("Audience");
+        var secretKey = jwtOptions.GetValue<string>("SigningKey");
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(secretKey);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, userId),
+                new Claim(ClaimTypes.Role, role)
+            }),
+            Expires = DateTime.UtcNow.AddHours(1),
+            Issuer = issuer,
+            Audience = audience,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+}
