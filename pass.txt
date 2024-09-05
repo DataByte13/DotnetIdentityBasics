@@ -1,0 +1,53 @@
+@section Scripts {
+    <script>
+        // Function to populate the dynamic list
+        function populateDynamicList() {
+            const headers = $('.custom-menu-target');
+            const listContainer = $('.dynamic-list');
+            listContainer.empty();
+
+            headers.each(function() {
+                const headerText = $(this).text();
+                const columnName = $(this).data('column');
+                const listItem = $('<li></li>');
+
+                listItem.text(headerText);
+                listItem.data('column', columnName);
+                listContainer.append(listItem);
+            });
+
+            // Add click event to toggle column visibility
+            toggleButtonState();
+        }
+
+        // Function to handle click events on the list items
+        function toggleButtonState() {
+            $('.dynamic-list li').on('click', function() {
+                const columnName = $(this).data('column');
+                $(this).toggleClass('pressed');
+
+                // Toggle visibility of the corresponding grid column
+                toggleColumnVisibility(columnName);
+            });
+        }
+
+        // Function to toggle the visibility of the grid column
+        function toggleColumnVisibility(columnName) {
+            const header = $('.custom-menu-target[data-column="' + columnName + '"]');
+            const columnIndex = header.index() + 1; // Get the column index (1-based)
+            
+            if (header.hasClass('hidden-column')) {
+                header.removeClass('hidden-column');
+                $('#grid-container table tr td:nth-child(' + columnIndex + '), #grid-container table th:nth-child(' + columnIndex + ')').show();
+            } else {
+                header.addClass('hidden-column');
+                $('#grid-container table tr td:nth-child(' + columnIndex + '), #grid-container table th:nth-child(' + columnIndex + ')').hide();
+            }
+        }
+
+        $(document).ready(function() {
+            populateDynamicList();
+        });
+    </script>
+}
+
