@@ -51,3 +51,57 @@
     </script>
 }
 
+function populateDynamicList() {
+    const headers = $('.custom-menu-target');
+    const listContainer = $('.dynamic-list');
+    listContainer.empty();
+
+    headers.each(function(index) {
+        const headerText = $(this).text();
+        const columnName = $(this).data('column'); // Use data-column attribute
+        const listItem = $('<li></li>');
+
+        listItem.text(headerText);
+        listItem.data('index', index + 1); // 1-based index
+        listItem.data('column', columnName); // Store column name
+        listContainer.append(listItem);
+    });
+
+    toggleButtonState();
+}
+
+function toggleButtonState() {
+    $('.dynamic-list li').on('click', function() {
+        const columnIndex = $(this).data('index');
+        const columnName = $(this).data('column');
+        console.log("Clicked item index:", columnIndex, "Column name:", columnName);
+        $(this).toggleClass('pressed');
+        toggleColumnVisibility(columnIndex);
+    });
+}
+
+function toggleColumnVisibility(columnIndex) {
+    // Convert 1-based index to 0-based for jQuery
+    const index = columnIndex - 1;
+
+    // Select the header and all cells in that column
+    const header = $('.custom-menu-target').eq(index);
+    const cells = $('#grid-container table tr td:nth-child(' + columnIndex + '), #grid-container table th:nth-child(' + columnIndex + ')');
+
+    if (header.hasClass('hidden-column')) {
+        // Show the column
+        header.removeClass('hidden-column');
+        cells.removeClass('hidden-column');
+        cells.show(); // Ensure cells are visible
+    } else {
+        // Hide the column
+        header.addClass('hidden-column');
+        cells.addClass('hidden-column');
+        cells.hide(); // Ensure cells are hidden
+    }
+}
+
+$(document).ready(function() {
+    populateDynamicList();
+});
+
