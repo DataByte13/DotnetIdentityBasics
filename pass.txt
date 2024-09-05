@@ -105,3 +105,93 @@ $(document).ready(function() {
     populateDynamicList();
 });
 
+function removeColumnByIndex(columnIndex) {
+    const grid = $("#grid-container").data("kendoGrid");
+
+    // Get the current columns
+    const columns = grid.columns;
+
+    // Ensure index is within bounds
+    if (columnIndex < 0 || columnIndex >= columns.length) {
+        console.error('Column index out of bounds');
+        return;
+    }
+
+    // Filter out the column by index
+    const updatedColumns = columns.filter((_, index) => index !== columnIndex);
+
+    // Update the grid columns
+    grid.setOptions({
+        columns: updatedColumns
+    });
+
+    // Optionally, you might need to refresh the grid to reflect changes
+    grid.refresh();
+}
+const newColumnConfig = {
+    field: "NewField",        // Data field name in your data source
+    title: "New Column",      // Column header title
+    width: 150,               // Column width
+    sortable: true,           // Enable sorting
+    filterable: true          // Enable filtering
+};
+
+function addColumnByIndex(columnConfig, columnIndex) {
+    const grid = $("#grid-container").data("kendoGrid");
+
+    // Get the current columns
+    const columns = grid.columns;
+
+    // Ensure index is within bounds
+    if (columnIndex < 0 || columnIndex > columns.length) {
+        console.error('Column index out of bounds');
+        return;
+    }
+
+    // Insert the new column configuration at the specified index
+    columns.splice(columnIndex, 0, columnConfig);
+
+    // Update the grid columns
+    grid.setOptions({
+        columns: columns
+    });
+
+    // Optionally, you might need to refresh the grid to reflect changes
+    grid.refresh();
+}
+
+// Example usage:
+const newColumnConfig = {
+    field: "NewField",
+    title: "New Column",
+    width: 150,
+    sortable: true,
+    filterable: true
+};
+
+// Add the new column as the second column (index 1)
+addColumnByIndex(newColumnConfig, 1);
+function removeColumnByIndex(columnIndex) {
+    const grid = $("#grid-container").data("kendoGrid");
+
+    // Get the current columns
+    const columns = grid.columns;
+
+    // Ensure index is within bounds
+    if (columnIndex < 0 || columnIndex >= columns.length) {
+        console.error('Column index out of bounds');
+        return;
+    }
+
+    // Remove the column at the specified index
+    columns.splice(columnIndex, 1);
+
+    // Update the grid columns
+    grid.setOptions({
+        columns: columns
+    });
+
+    // Optionally, you might need to refresh the grid to reflect changes
+    grid.refresh();
+}
+
